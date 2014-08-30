@@ -42,6 +42,14 @@ static const uint8_t OPERATION_SEND_MAC_SOCKET = 0x21;
 static const uint8_t OPERATION_SEND_KEEP_SOCKET = 0x22;
 static const uint8_t OPERATION_RECV_SOCKET = 0x40;
 
+struct UDPHeader {
+    uint8_t destinationIPAddressByte1;
+    uint8_t destinationIPAddressByte2;
+    uint8_t destinationIPAddressByte3;
+    uint8_t destinationIPAddressByte4;
+    uint16_t destinationPort;
+    uint16_t dataLength;
+};
 
 void socketCommand(uint8_t socket, uint8_t command);
 void openSocket(uint8_t socket);
