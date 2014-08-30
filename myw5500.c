@@ -18,6 +18,10 @@ void openSocket(uint8_t socket) {
     socketCommand(socket, OPERATION_OPEN_SOCKET);
 }
 
+void closeSocket(uint8_t socket) {
+    socketCommand(socket, OPERATION_CLOSE_SOCKET);
+}
+
 void send(uint8_t socket) {
     socketCommand(socket, OPERATION_SEND_SOCKET);
 }
@@ -75,20 +79,7 @@ void setSocketDestinationPort(uint8_t socket, uint16_t port) {
     while(WriteSPI(lowByte));
     PORTAbits.RA5 = 1;
 }
-/*void setSocketSourceIPAddress(uint8_t socket, uint32_t port) {
-    uint8_t blockSelect = (socket << 3) + 0x04;
 
-    PORTAbits.RA5 = 0;
-    while(WriteSPI(0x00));
-    while(WriteSPI(0x0C));
-    while(WriteSPI(blockSelect));
-
-    while(WriteSPI(0xC0));
-    while(WriteSPI(0xA8));
-    while(WriteSPI(0x01));
-    while(WriteSPI(0x67));
-    PORTAbits.RA5 = 1;
-}*/
 void setSocketDestinationIPAddress(uint8_t socket, uint8_t *address) {
     uint8_t blockSelect = (socket << 3) + 0x04;
 
@@ -116,4 +107,52 @@ uint8_t readSocketStatus(uint8_t socket) {
     PORTAbits.RA5 = 1;
 
     return status;
+}
+
+uint16_t readWritePointer(uint8_t socket) {
+    uint8_t blockSelect = (socket << 3);
+
+    PORTAbits.RA5 = 0;
+    while(WriteSPI(0x00));
+    while(WriteSPI(0x24));
+    while(WriteSPI(blockSelect));
+
+    uint8_t writePointerByte1, writePointerByte2;
+    writePointerByte1 = ReadSPI();
+    writePointerByte2 = ReadSPI();
+    PORTAbits.RA5 = 1;
+
+    uint16_t writePointer = (writePointerByte1 << 8) + writePointerByte2;
+    return writePointer;
+}
+
+void increaseWritePointer(uint8_t socket, uint16_t len) {
+    uint8_t blockSelect = (socket << 3) + 0x04;
+
+    PORTAbits.RA5 = 0;
+    while(WriteSPI(0x00));
+    while(WriteSPI(0x24));
+    while(WriteSPI(blockSelect));
+
+    while(WriteSPI((len >> 8) & 0xFF));
+    while(WriteSPI(len & 0xFF));
+    PORTAbits.RA5 = 1;
+}
+
+void writeToSocketTxBuffer(uint8_t socketTxBuffer, uint16_t writePointer, unsigned char *data) {
+    uint8_t blockSelect = (socketTxBuffer << 3) + 0x04;
+
+    uint8_t writePointerH, writePointerL;
+    writePointerH = (writePointer >> 8) & 0xFF;
+    writePointerL = writePointer & 0xFF;
+
+    PORTAbits.RA5 = 0;
+    while(WriteSPI(writePointerH));
+    while(WriteSPI(writePointerL));
+    while(WriteSPI(blockSelect)); //socket 1 tx buffer
+
+    for (uint16_t i=0; i<sizeof(data); i++) {
+       while(WriteSPI(data[i]));
+    }
+    PORTAbits.RA5 = 1;
 }
