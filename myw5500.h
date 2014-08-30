@@ -14,6 +14,7 @@
 extern "C" {
 #endif
 
+static const uint8_t UDP_HEADER_LENGTH = 8;
 
 static const uint8_t SOCK_CLOSED = 0x00;
 static const uint8_t SOCK_INIT = 0x13;
@@ -56,9 +57,14 @@ void setSocketDestinationPort(uint8_t socket, uint16_t port);
 void setSocketDestinationIPAddress(uint8_t socket, uint8_t *address);
 
 uint8_t readSocketStatus(uint8_t socket);
+uint8_t readSocketInterruptRegister(uint8_t socket);
+uint16_t readNumberOfBytesReceived(uint8_t socket);
 uint16_t readWritePointer(uint8_t socket);
+uint16_t readReadPointer(uint8_t socket);
 void increaseWritePointer(uint8_t socket, uint16_t len);
+void increaseReadPointer(uint8_t socket, uint16_t len);
 void writeToSocketTxBuffer(uint8_t socketTxBuffer, uint16_t writePointer, unsigned char *data);
+uint16_t readFromSocketRxBuffer(uint8_t socketRxBuffer, uint16_t readPointer, unsigned char *buffer);
 
 #ifdef	__cplusplus
 }
