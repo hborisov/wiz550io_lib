@@ -14,6 +14,9 @@ extern "C" {
 
 static const unsigned char SOCKET_1 = 0b00101;
 
+static const unsigned char SOCKET_UDP = 0x02;
+static const unsigned char SOCKET_TCP = 0x01;
+
 static const unsigned char OPERATION_OPEN_SOCKET = 0x01;
 static const unsigned char OPERATION_LISTEN_SOCKET = 0x02;
 static const unsigned char OPERATION_CONNECT_SOCKET = 0x04;
@@ -30,6 +33,9 @@ void openSocket(unsigned char socket);
 void send(unsigned char socket);
 void receive(unsigned char socket);
 
+void setSocketMode(unsigned char socket, unsigned char mode);
+void setSocketUDPMode(unsigned char socket);
+void setSocketSourcePort(unsigned char socket, unsigned short port);
 #ifdef	__cplusplus
 }
 #endif
