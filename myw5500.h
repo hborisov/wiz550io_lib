@@ -12,6 +12,8 @@
 extern "C" {
 #endif
 
+static const unsigned char SOCKET_1 = 0b00101;
+
 static const unsigned char OPERATION_OPEN_SOCKET = 0x01;
 static const unsigned char OPERATION_LISTEN_SOCKET = 0x02;
 static const unsigned char OPERATION_CONNECT_SOCKET = 0x04;
@@ -23,8 +25,10 @@ static const unsigned char OPERATION_SEND_KEEP_SOCKET = 0x22;
 static const unsigned char OPERATION_RECV_SOCKET = 0x40;
 
 
-void sendCommand(unsigned char socket, unsigned char command);
+void socketCommand(unsigned char socket, unsigned char command);
 void openSocket(unsigned char socket);
+void send(unsigned char socket);
+void receive(unsigned char socket);
 
 #ifdef	__cplusplus
 }

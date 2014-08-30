@@ -1,7 +1,7 @@
 #include "myw5500.h"
 #include <xc.h>
 
-void sendCommand(unsigned char socket, unsigned char command) {
+void socketCommand(unsigned char socket, unsigned char command) {
     unsigned char blockSelect = (socket << 3) + 0x04;
 
     PORTAbits.RA5 = 0;
@@ -14,5 +14,13 @@ void sendCommand(unsigned char socket, unsigned char command) {
 }
 
 void openSocket(unsigned char socket) {
-    sendCommand(socket, OPERATION_OPEN_SOCKET);
+    socketCommand(socket, OPERATION_OPEN_SOCKET);
+}
+
+void send(unsigned char socket) {
+    socketCommand(socket, OPERATION_SEND_SOCKET);
+}
+
+void receive(unsigned char socket) {
+    socketCommand(socket, OPERATION_RECV_SOCKET);
 }
