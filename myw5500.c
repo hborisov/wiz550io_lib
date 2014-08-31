@@ -31,6 +31,20 @@ void receive(uint8_t socket) {
     socketCommand(socket, OPERATION_RECV_SOCKET);
 }
 
+void connect(uint8_t socket) {
+    socketCommand(socket, OPERATION_CONNECT_SOCKET);
+}
+
+void disconnect(uint8_t socket) {
+    socketCommand(socket, OPERATION_DISCON_SOCKET);
+}
+
+void close(uint8_t socket) {
+    socketCommand(socket, OPERATION_CLOSE_SOCKET);
+}
+
+
+
 void setSocketMode(uint8_t socket, uint8_t mode) {
     uint8_t blockSelect = (socket << 3) + 0x04;
 
@@ -45,6 +59,10 @@ void setSocketMode(uint8_t socket, uint8_t mode) {
 
 void setSocketUDPMode(uint8_t socket) {
     setSocketMode(socket, SOCKET_UDP);
+}
+
+void setSocketTCPMode(uint8_t socket) {
+    setSocketMode(socket, SOCKET_TCP);
 }
 
 void setSocketSourcePort(uint8_t socket, uint16_t port) {
@@ -183,7 +201,7 @@ void increaseReadPointer(uint8_t socket, uint16_t len) {
     PORTAbits.RA5 = 1;
 }
 
-void writeToSocketTxBuffer(uint8_t socketTxBuffer, uint16_t writePointer, unsigned char *data) {
+void writeToSocketTxBuffer(uint8_t socketTxBuffer, uint16_t writePointer, unsigned char data[], uint16_t len) {
     uint8_t blockSelect = (socketTxBuffer << 3) + 0x04;
 
     uint8_t writePointerH, writePointerL;
@@ -193,9 +211,9 @@ void writeToSocketTxBuffer(uint8_t socketTxBuffer, uint16_t writePointer, unsign
     PORTAbits.RA5 = 0;
     while(WriteSPI(writePointerH));
     while(WriteSPI(writePointerL));
-    while(WriteSPI(blockSelect)); //socket 1 tx buffer
+    while(WriteSPI(blockSelect));
 
-    for (uint16_t i=0; i<sizeof(data); i++) {
+    for (uint16_t i=0; i<len; i++) {
        while(WriteSPI(data[i]));
     }
     PORTAbits.RA5 = 1;
@@ -234,6 +252,21 @@ uint16_t readFromSocketRxBuffer(uint8_t socketRxBuffer, uint16_t readPointer, un
     return dataLength;
 }
 
+void readFromSocketRxBufferLen(uint8_t socketRxBuffer, uint16_t readPointer, unsigned char *buffer, uint16_t len) {
+    uint8_t blockSelect = (socketRxBuffer << 3);
+
+    PORTAbits.RA5 = 0;
+    while(WriteSPI((readPointer >> 8) & 0xFF));
+    while(WriteSPI(readPointer & 0xFF));
+    while(WriteSPI(blockSelect));
+
+    for(int i=0; i<len; i++) {
+        buffer[i] = ReadSPI();
+    }
+
+    PORTAbits.RA5 = 1;
+}
+
 uint16_t readNumberOfBytesReceived(uint8_t socket) {
     uint8_t blockSelect = (socket << 3);
     
@@ -248,4 +281,32 @@ uint16_t readNumberOfBytesReceived(uint8_t socket) {
 
     uint16_t numBytesRead = (numBytesRead1 << 8) + numBytesRead2;
     return numBytesRead;
+}
+
+void clearInterrupts(uint8_t socket) {
+    uint8_t blockSelect = (socket << 3) + 0x04;
+
+    PORTAbits.RA5 = 0;
+    while(WriteSPI(0x00));
+    while(WriteSPI(0x02));
+    while(WriteSPI(blockSelect));  //read number of bytes read
+
+    while(WriteSPI(0xFF));
+    PORTAbits.RA5 = 1;
+}
+
+uint16_t readTxFreeSize(uint8_t socket) {
+    uint8_t blockSelect = (socket << 3);
+
+    PORTAbits.RA5 = 0;
+    while(WriteSPI(0x00));
+    while(WriteSPI(0x20));
+    while(WriteSPI(blockSelect));  //read number of bytes read
+
+    uint8_t freeSizeHighByte = ReadSPI();
+    uint8_t freeSizeLowByte = ReadSPI();
+    PORTAbits.RA5 = 1;
+
+    uint16_t freeTxSize = (freeSizeHighByte << 8) + freeSizeLowByte;
+    return freeTxSize;
 }
