@@ -75,7 +75,7 @@ uint16_t readWritePointer(uint8_t socket);
 uint16_t readReadPointer(uint8_t socket);
 void increaseWritePointer(uint8_t socket, uint16_t len);
 void increaseReadPointer(uint8_t socket, uint16_t len);
-void writeToSocketTxBuffer(uint8_t socketTxBuffer, uint16_t writePointer, unsigned char data[], uint16_t len);
+void writeToSocketTxBuffer(uint8_t socketTxBuffer, uint16_t writePointer, unsigned char* data);
 uint16_t readFromSocketRxBuffer(uint8_t socketRxBuffer, uint16_t readPointer, unsigned char *buffer);
 void readFromSocketRxBufferLen(uint8_t socketRxBuffer, uint16_t readPointer, unsigned char *buffer, uint16_t len);
 uint16_t readTxFreeSize(uint8_t socket);

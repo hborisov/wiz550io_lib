@@ -1,6 +1,7 @@
 #include "myw5500.h"
 #include <xc.h>
 #include "plib/usart.h"
+#include <string.h>
 
 
 void socketCommand(uint8_t socket, uint8_t command) {
@@ -201,7 +202,7 @@ void increaseReadPointer(uint8_t socket, uint16_t len) {
     PORTAbits.RA5 = 1;
 }
 
-void writeToSocketTxBuffer(uint8_t socketTxBuffer, uint16_t writePointer, unsigned char data[], uint16_t len) {
+void writeToSocketTxBuffer(uint8_t socketTxBuffer, uint16_t writePointer, unsigned char* data) {
     uint8_t blockSelect = (socketTxBuffer << 3) + 0x04;
 
     uint8_t writePointerH, writePointerL;
@@ -213,6 +214,7 @@ void writeToSocketTxBuffer(uint8_t socketTxBuffer, uint16_t writePointer, unsign
     while(WriteSPI(writePointerL));
     while(WriteSPI(blockSelect));
 
+    uint16_t len = strlen(data);
     for (uint16_t i=0; i<len; i++) {
        while(WriteSPI(data[i]));
     }
