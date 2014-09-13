@@ -1,6 +1,6 @@
 /* 
  * File:   myw5500.h
- * Author: hbb
+ * Author: Hristo Borisov
  *
  * Created on August 30, 2014, 4:57 PM
  */
@@ -65,7 +65,6 @@ void setSocketUDPMode(uint8_t socket);
 void setSocketTCPMode(uint8_t socket);
 void setSocketSourcePort(uint8_t socket, uint16_t port);
 void setSocketDestinationPort(uint8_t socket, uint16_t port);
-//void setSocketSourceIPAddress(uint8_t socket, uint32_t port);
 void setSocketDestinationIPAddress(uint8_t socket, uint8_t *address);
 
 uint8_t readSocketStatus(uint8_t socket);

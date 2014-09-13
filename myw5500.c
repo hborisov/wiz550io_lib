@@ -231,9 +231,7 @@ uint16_t readFromSocketRxBuffer(uint8_t socketRxBuffer, uint16_t readPointer, un
 
     for (int i=0; i<UDP_HEADER_LENGTH; i++) {
         unsigned char temp = ReadSPI();
-            //while(BusyUSART());
-            //WriteUSART(temp);
-            buffer[i] = temp;
+        buffer[i] = temp;
     }
     PORTAbits.RA5 = 1;
     uint16_t dataLength = (buffer[6] << 8) + buffer[7];
@@ -246,8 +244,6 @@ uint16_t readFromSocketRxBuffer(uint8_t socketRxBuffer, uint16_t readPointer, un
 
     for (int j=0; j<dataLength; j++) {
         buffer[j+8] = ReadSPI();
-            //while(BusyUSART());
-            //WriteUSART(buffer[j+8]);
     }
     PORTAbits.RA5 = 1;
 
