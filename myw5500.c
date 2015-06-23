@@ -24,6 +24,10 @@ void closeSocket(uint8_t socket) {
     socketCommand(socket, OPERATION_CLOSE_SOCKET);
 }
 
+void listen(uint8_t socket) {
+    socketCommand(socket, OPERATION_LISTEN_SOCKET);
+}
+
 void send(uint8_t socket) {
     socketCommand(socket, OPERATION_SEND_SOCKET);
 }

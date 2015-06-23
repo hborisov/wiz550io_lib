@@ -28,6 +28,9 @@ static const uint8_t SOCK_MACRAW = 0x42;
 static const uint8_t SOCKET_1 = 0b00101;
 static const uint8_t SOCKET_1_TX_BUFFER = 0b00110;
 static const uint8_t SOCKET_1_RX_BUFFER = 0b00111;
+static const uint8_t SOCKET_2 = 0b01001;
+static const uint8_t SOCKET_2_TX_BUFFER = 0b01010;
+static const uint8_t SOCKET_2_RX_BUFFER = 0b01011;
 
 static const uint8_t SOCKET_UDP = 0x02;
 static const uint8_t SOCKET_TCP = 0x01;
@@ -54,6 +57,7 @@ struct UDPHeader {
 void socketCommand(uint8_t socket, uint8_t command);
 void openSocket(uint8_t socket);
 void closeSocket(uint8_t socket);
+void listen(uint8_t socket);
 void send(uint8_t socket);
 void receive(uint8_t socket);
 void connect(uint8_t socket);
